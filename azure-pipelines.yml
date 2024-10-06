@@ -12,7 +12,6 @@ trigger:
 variables:
     buildConfiguration: Release
 
-
 steps:
 - task: UseDotNet@2
   displayName: 'Use .NET SDK 6.x'
@@ -38,5 +37,16 @@ steps:
   displayName: 'Build the project - Release'
   inputs:
       command: build
-      arguments: "--no-restore --configuration Release"
+      arguments: "--no-restore --configuration $(buildConfiguration)"
       projects: '**/*.csproj'
+- task: DotNetCoreCLI@2
+  displayName: 'Publish the project - Release'
+  inputs:
+    command: publish
+    projects: '**/*.csproj'
+    publishWebProjects: false
+    arguments: '--no-build --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)/Release'
+    zipAfterPublish: true
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Aritfact: drop'
+  condition: succeeded()
