@@ -2,5 +2,17 @@
 pool:
     vmImage: 'ubuntu-latest'
 
+trigger:
+    branches:
+        include:
+            - main
+    batch: true
+
+
+variables:
+    buildConfiguration: Release
+
+
 steps:
-- bash: echo hello world
+- script: dotnet build --configuration $(buildConfiguration)
+  displayName: 'dotnet build $(buildConfiguration)'
